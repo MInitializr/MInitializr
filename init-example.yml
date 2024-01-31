@@ -1,0 +1,42 @@
+mi:
+  version: 0.0.1
+services: 
+  costumer:
+      technology: spring-boot
+      config:
+        version: 3.2.2
+        language: java
+        type: maven-project
+        group: com.example
+        artifact: costumer
+        name: costumer
+        description: costumer service
+        packageName: com.example.demo
+        javaVersion: 17
+        packaging: jar
+        dependencies: native
+  product:
+      technology: micronaut
+      config:
+        version: prev
+        type: default
+        lang: JAVA
+        test: JUNIT
+        build: GRADLE
+        javaVersion: JDK_17
+        basePackage: com.example
+        name: product
+        features: 
+          - graphql
+          - jackson-databind
+  stock:
+      technology: quarkus
+      config:
+        group: io.mi
+        artifact: stock
+        buildTool: GRADLE
+        version: 1.0.0-SNAPSHOT
+        javaVersion: 11
+        extensions: 
+          - hibernate-orm
+          - hibernate-orm-panache
