@@ -38,7 +38,7 @@ func getInitializer(serviceName string, service types.MIService) types.Initializ
 	}
 	switch service.Technology {
 	case "spring-boot":
-		initializer = initializers.SpringBootIntializer(baseInitializer)
+		initializer = initializers.SpringBootInitializer(baseInitializer)
 	case "micronaut":
 		initializer = initializers.MicronautInitializer(baseInitializer)
 	case "quarkus":

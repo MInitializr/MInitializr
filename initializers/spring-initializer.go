@@ -4,51 +4,32 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"os"
 	"strconv"
-	"github.com/evilsocket/islazy/zip"
 	"example.com/minitializr/utils"
 )
 
-type SpringBootIntializer BaseIntializer;
+type SpringBootInitializer BaseIntializer;
 
-func (springBootIntializer SpringBootIntializer) Initialize(){
-	log.Printf("Initializing service %s with SpringBoot Initializr...", springBootIntializer.ServiceName)
-	log.Printf("Initialization config %v", springBootIntializer.Service.Config)
-	baseURL := "https://start.spring.io/starter.zip"
-	baseDir := springBootIntializer.ServiceName
-	fullURL, err:= springBootIntializer.constructUrl(baseURL, springBootIntializer.Service.Config)
+func (initializer SpringBootInitializer) Initialize(){
+	log.Printf("Initializing service %s with SpringBoot Initializr...", initializer.ServiceName)
+	log.Printf("Initialization config %v", initializer.Service.Config)
+	fullURL, err:= initializer.constructUrl()
 	if(err != nil){
 		log.Println("Error:", err)
 		return
 	}
-	log.Println(fullURL)
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Println("Error:", err)
-		return
-	}
-	filePath := fmt.Sprintf("%s/.minitializer/%s.zip", userHomeDir, baseDir)
-	err = utils.DownloadFile(fullURL, filePath)
-	if err != nil {
-		log.Println("Error:", err)
-		return
-	}
-	_,err = zip.Unzip(filePath, fmt.Sprintf("%s/.minitializer/%s", userHomeDir, baseDir))
-	if err != nil {
-		log.Println("Error:", err)
-		return
-	}
-	err = os.RemoveAll(filePath)
+	err = utils.InitializeWithWebIntializer(initializer.ServiceName, initializer.ServiceName, fullURL)
 	if err != nil {
 		log.Println("Error:", err)
 		return
 	}
 }
 
-func (SpringBootIntializer) constructUrl(baseUrl string, params map[string]any) (string, error) {
+func (initializer SpringBootInitializer) constructUrl() (string, error) {
+	config := initializer.Service.Config
+	baseURL := "https://start.spring.io/starter.zip"
 	urlParams := url.Values{}
-	for k,v := range params {
+	for k,v := range config {
 		switch val := v.(type) {
 		case string:
 			urlParams.Add(k, val)
@@ -59,6 +40,6 @@ func (SpringBootIntializer) constructUrl(baseUrl string, params map[string]any) 
 		}
 	}
 	// Construct the full URL with parameters
-	fullURL := fmt.Sprintf("%s?%s", baseUrl, urlParams.Encode())
+	fullURL := fmt.Sprintf("%s?%s", baseURL, urlParams.Encode())
 	return fullURL, nil
 }

@@ -5,44 +5,25 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"os"
 	"example.com/minitializr/utils"
-	"github.com/evilsocket/islazy/zip"
 )
 
 type QuarkusInitializer BaseIntializer
 
-func (quarkusInitializer QuarkusInitializer) Initialize() {
-	log.Printf("Initializing service %s with Micronaut Initializr...", quarkusInitializer.ServiceName)
-	log.Printf("Initialization config %v", quarkusInitializer.Service.Config)
-	baseDir := quarkusInitializer.ServiceName
-	fullURL, err := quarkusInitializer.constructUrl()
+func (initializer QuarkusInitializer) Initialize() {
+	log.Printf("Initializing service %s with %s...", initializer, initializer.ServiceName)
+	log.Printf("Initialization config %v", initializer.Service.Config)
+	fullURL, err := initializer.constructUrl()
 	if err != nil {
 		log.Println("Error:", err)
 		return
 	}
-	log.Println(fullURL)
-	userHomeDir, err := os.UserHomeDir()
+	err = utils.InitializeWithWebIntializer(initializer.ServiceName, "", fullURL)
 	if err != nil {
 		log.Println("Error:", err)
 		return
 	}
-	filePath := fmt.Sprintf("%s/.minitializer/%s.zip", userHomeDir, baseDir)
-	err = utils.DownloadFile(fullURL, filePath)
-	if err != nil {
-		log.Println("Error:", err)
-		return
-	}
-	_, err = zip.Unzip(filePath, fmt.Sprintf("%s/.minitializer", userHomeDir))
-	if err != nil {
-		log.Println("Error:", err)
-		return
-	}
-	err = os.RemoveAll(filePath)
-	if err != nil {
-		log.Println("Error:", err)
-		return
-	}
+	
 }
 
 func (quarkusInitializer QuarkusInitializer) constructUrl() (string, error) {

@@ -36,7 +36,7 @@ services:
         artifact: stock
         buildTool: GRADLE
         version: 1.0.0-SNAPSHOT
-        javaVersion: 11
+        javaVersion: 17
         extensions: 
           - hibernate-orm
           - hibernate-orm-panache
