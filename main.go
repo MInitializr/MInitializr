@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+
 	"example.com/minitializr/initializers"
 	"example.com/minitializr/types"
 	"gopkg.in/yaml.v3"
@@ -12,7 +13,7 @@ func main() {
 	miConfig := getMIConfig()
 	for serviceName, service := range miConfig.Services {
 		getInitializer(serviceName, service).Initialize()
-	} 
+	}
 }
 
 func getMIConfig() types.MIConfig {
@@ -29,20 +30,20 @@ func getMIConfig() types.MIConfig {
 	return miConfig
 }
 
-
 func getInitializer(serviceName string, service types.MIService) types.Initializer {
-	var initializer types.Initializer;
-	baseInitializer := initializers.BaseIntializer {
-		ServiceName : serviceName,
-		Service : service,
+	baseInitializer := initializers.BaseInitializer{
+		ServiceName: serviceName,
+		Service:     service,
 	}
 	switch service.Technology {
 	case "spring-boot":
-		initializer = initializers.SpringBootInitializer(baseInitializer)
+		return initializers.SpringBootInitializer(baseInitializer)
 	case "micronaut":
-		initializer = initializers.MicronautInitializer(baseInitializer)
+		return initializers.MicronautInitializer(baseInitializer)
 	case "quarkus":
-		initializer = initializers.QuarkusInitializer(baseInitializer)
+		return initializers.QuarkusInitializer(baseInitializer)
+	case "grails":
+		return initializers.GrailsInitializer(baseInitializer)
 	}
-	return initializer
+	return baseInitializer
 }

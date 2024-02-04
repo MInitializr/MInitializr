@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+
 	"example.com/minitializr/utils"
 )
 
-type MicronautInitializer BaseInitializer
+type GrailsInitializer BaseInitializer
 
-func (initializer MicronautInitializer) Initialize() {
+func (initializer GrailsInitializer) Initialize() {
 	log.Printf("Initializing service %s with Micronaut Initializr...", initializer.ServiceName)
 	log.Printf("Initialization config %v", initializer.Service.Config)
 	fullURL, err := initializer.constructUrl()
@@ -24,21 +25,19 @@ func (initializer MicronautInitializer) Initialize() {
 	}
 }
 
-func (initializer MicronautInitializer) constructUrl() (string, error) {
+func (initializer GrailsInitializer) constructUrl() (string, error) {
 	config := initializer.Service.Config
-	versionAlias := "launch"
+	versionAlias := "latest"
 	switch config["version"] {
-	case "latest", "4.2.4":
-		versionAlias = "launch"
-	case "snapshot", "4.2.5-SNAPSHOT":
+	case "latest", "6.1.2":
+		versionAlias = "latest"
+	case "snapshot", "6.1.3-SNAPSHOT":
 		versionAlias = "snapshot"
-	case "prev", "3.10.1":
-		versionAlias = "prev"
 	}
-	baseURL := fmt.Sprintf("https://%s.micronaut.io/create/%s/%s.%s", versionAlias, config["type"], config["basePackage"], config["name"])
+	baseURL := fmt.Sprintf("https://%s.grails.org/create/%s/%s.%s", versionAlias, config["type"], config["basePackage"], config["name"])
 	urlParams := url.Values{}
-	urlParams.Add("lang", fmt.Sprintf("%v", config["lang"]))
-	urlParams.Add("build", fmt.Sprintf("%v", config["build"]))
+	urlParams.Add("gorm", fmt.Sprintf("%v", config["gorm"]))
+	urlParams.Add("servlet", fmt.Sprintf("%v", config["servlet"]))
 	urlParams.Add("javaVersion", fmt.Sprintf("%v", config["javaVersion"]))
 	urlParams.Add("test", fmt.Sprintf("%v", config["test"]))
 	features, ok := config["features"].([]any)

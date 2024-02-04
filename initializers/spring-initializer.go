@@ -8,7 +8,7 @@ import (
 	"example.com/minitializr/utils"
 )
 
-type SpringBootInitializer BaseIntializer;
+type SpringBootInitializer BaseInitializer;
 
 func (initializer SpringBootInitializer) Initialize(){
 	log.Printf("Initializing service %s with SpringBoot Initializr...", initializer.ServiceName)

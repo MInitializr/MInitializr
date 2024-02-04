@@ -40,3 +40,16 @@ services:
         extensions: 
           - hibernate-orm
           - hibernate-orm-panache
+  payment:
+      technology: grails
+      config:
+        version: 6.1.2
+        type: rest_api
+        basePackage: io.mi
+        name: payment
+        gorm: MONGODB
+        servlet: TOMCAT
+        test: SPOCK
+        javaVersion: JDK_17
+        features: 
+          - github-workflow-java-ci

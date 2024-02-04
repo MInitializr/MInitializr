@@ -8,7 +8,7 @@ import (
 	"example.com/minitializr/utils"
 )
 
-type QuarkusInitializer BaseIntializer
+type QuarkusInitializer BaseInitializer
 
 func (initializer QuarkusInitializer) Initialize() {
 	log.Printf("Initializing service %s with %s...", initializer, initializer.ServiceName)

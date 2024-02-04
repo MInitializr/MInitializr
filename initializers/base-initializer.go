@@ -5,11 +5,11 @@ import (
 	"example.com/minitializr/types"
 )
 
-type BaseIntializer struct {
+type BaseInitializer struct {
 	ServiceName string
 	Service types.MIService
 }
 
-func (BaseIntializer) Initialize(){
+func (BaseInitializer) Initialize(){
 	log.Println("BaseIntializer")
 }
