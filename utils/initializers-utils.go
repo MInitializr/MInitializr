@@ -24,7 +24,7 @@ func InitializeWithWebIntializer(serviceName, baseDir, initializerUrl string) er
 		return err
 	}
 	err = os.RemoveAll(filePath)
-	if err != nil {		
+	if err != nil {
 		return err
 	}
 	return nil

@@ -9,9 +9,9 @@ import (
 	"example.com/minitializr/utils"
 )
 
-type SpringBootInitializer BaseInitializer
+type VertxInitializer BaseInitializer
 
-func (initializer SpringBootInitializer) Initialize() {
+func (initializer VertxInitializer) Initialize() {
 	log.Printf("Initializing service %s with SpringBoot Initializr...", initializer.ServiceName)
 	log.Printf("Initialization config %v", initializer.Service.Config)
 	fullURL, err := initializer.constructUrl()
@@ -26,9 +26,9 @@ func (initializer SpringBootInitializer) Initialize() {
 	}
 }
 
-func (initializer SpringBootInitializer) constructUrl() (string, error) {
+func (initializer VertxInitializer) constructUrl() (string, error) {
 	config := initializer.Service.Config
-	baseURL := "https://start.spring.io/starter.zip"
+	baseURL := "https://start.vertx.io/starter.zip"
 	urlParams := url.Values{}
 	for k, v := range config {
 		switch val := v.(type) {

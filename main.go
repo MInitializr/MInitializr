@@ -44,6 +44,8 @@ func getInitializer(serviceName string, service types.MIService) types.Initializ
 		return initializers.QuarkusInitializer(baseInitializer)
 	case "grails":
 		return initializers.GrailsInitializer(baseInitializer)
+	case "vertx":
+		return initializers.VertxInitializer(baseInitializer)
 	}
 	return baseInitializer
 }

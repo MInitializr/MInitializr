@@ -53,3 +53,14 @@ services:
         javaVersion: JDK_17
         features: 
           - github-workflow-java-ci
+  review:
+      technology: vertx
+      config:
+        vertxVersion: 4.5.2
+        groupId: io.mi
+        artifactId: review
+        language: java
+        buildTool: gradle
+        jdkVersion: 17
+        vertxDependencies: 
+          - vertx-web

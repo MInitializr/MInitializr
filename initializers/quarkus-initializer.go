@@ -1,10 +1,10 @@
 package initializers
 
-
 import (
 	"fmt"
 	"log"
 	"net/url"
+
 	"example.com/minitializr/utils"
 )
 
@@ -23,7 +23,7 @@ func (initializer QuarkusInitializer) Initialize() {
 		log.Println("Error:", err)
 		return
 	}
-	
+
 }
 
 func (quarkusInitializer QuarkusInitializer) constructUrl() (string, error) {
