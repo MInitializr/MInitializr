@@ -1,5 +1,6 @@
-mi:
-  version: 0.0.1
+apiVersion: 0.0.1
+metadata: 
+  name: ecom
 services: 
   costumer:
       technology: spring-boot

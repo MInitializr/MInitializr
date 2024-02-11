@@ -6,12 +6,13 @@ import (
 	"net/url"
 	"strconv"
 
+	"example.com/minitializr/types"
 	"example.com/minitializr/utils"
 )
 
 type VertxInitializer BaseInitializer
 
-func (initializer VertxInitializer) Initialize() {
+func (initializer VertxInitializer) Initialize(miConfig *types.MIConfig) {
 	log.Printf("Initializing service %s with SpringBoot Initializr...", initializer.ServiceName)
 	log.Printf("Initialization config %v", initializer.Service.Config)
 	fullURL, err := initializer.constructUrl()
@@ -19,7 +20,7 @@ func (initializer VertxInitializer) Initialize() {
 		log.Println("Error:", err)
 		return
 	}
-	err = utils.InitializeWithWebIntializer(initializer.ServiceName, initializer.ServiceName, fullURL)
+	err = utils.InitializeWithWebIntializer(miConfig.Metadata["name"], initializer.ServiceName, initializer.ServiceName, fullURL)
 	if err != nil {
 		log.Println("Error:", err)
 		return

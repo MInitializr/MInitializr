@@ -1,5 +1,5 @@
 package types
 
 type Initializer interface {
-	Initialize()
+	Initialize(*MIConfig)
 }

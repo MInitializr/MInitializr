@@ -9,14 +9,20 @@ import (
 
 	"example.com/minitializr/initializers"
 	"example.com/minitializr/types"
+	"example.com/minitializr/utils"
+	cp "github.com/otiai10/copy"
 	"gopkg.in/yaml.v3"
 )
 
-var File string 
+var File string
+var AsZip bool
+var Dest string
 
 func init() {
-  generateCmd.Flags().StringVarP(&File, "file", "f", "", "file path")
-  generateCmd.MarkFlagRequired("file")
+	generateCmd.Flags().StringVarP(&File, "file", "f", "", "file path")
+	generateCmd.MarkFlagRequired("file")
+	generateCmd.Flags().BoolVarP(&AsZip, "zip", "z", false, "generate as a zip")
+	generateCmd.Flags().StringVarP(&Dest, "dest", "d", ".", "destination folder")
 	rootCmd.AddCommand(generateCmd)
 }
 
@@ -27,9 +33,25 @@ var generateCmd = &cobra.Command{
 }
 
 func generate(cmd *cobra.Command, args []string) error {
-	miConfig := getMIConfig(fmt.Sprintf("%v",cmd.Flag("file").Value))
+	miConfig := getMIConfig(File)
 	for serviceName, service := range miConfig.Services {
-		getInitializer(serviceName, service).Initialize()
+		getInitializer(serviceName, service).Initialize(&miConfig)
+	}
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	projectPath := fmt.Sprintf("%s/.minitializer/%s", userHomeDir, miConfig.Metadata["name"])
+	if AsZip {
+		err = utils.ZipDirectory(Dest + "/" + miConfig.Metadata["name"]+".zip", projectPath)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := cp.Copy(projectPath, Dest + "/" + miConfig.Metadata["name"])
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

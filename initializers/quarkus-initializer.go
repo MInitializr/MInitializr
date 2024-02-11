@@ -5,12 +5,13 @@ import (
 	"log"
 	"net/url"
 
+	"example.com/minitializr/types"
 	"example.com/minitializr/utils"
 )
 
 type QuarkusInitializer BaseInitializer
 
-func (initializer QuarkusInitializer) Initialize() {
+func (initializer QuarkusInitializer) Initialize(miConfig *types.MIConfig) {
 	log.Printf("Initializing service %s with %s...", initializer, initializer.ServiceName)
 	log.Printf("Initialization config %v", initializer.Service.Config)
 	fullURL, err := initializer.constructUrl()
@@ -18,7 +19,7 @@ func (initializer QuarkusInitializer) Initialize() {
 		log.Println("Error:", err)
 		return
 	}
-	err = utils.InitializeWithWebIntializer(initializer.ServiceName, "", fullURL)
+	err = utils.InitializeWithWebIntializer(miConfig.Metadata["name"], initializer.ServiceName, "", fullURL)
 	if err != nil {
 		log.Println("Error:", err)
 		return

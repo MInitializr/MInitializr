@@ -11,6 +11,6 @@ type BaseInitializer struct {
 	Service     types.MIService
 }
 
-func (BaseInitializer) Initialize() {
+func (BaseInitializer) Initialize(*types.MIConfig) {
 	log.Println("BaseIntializer")
 }

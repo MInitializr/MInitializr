@@ -4,26 +4,25 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/evilsocket/islazy/zip"
 )
 
-func InitializeWithWebIntializer(serviceName, baseDir, initializerUrl string) error {
+func InitializeWithWebIntializer(projectName, serviceName, baseDir, initializerUrl string) error {
 	log.Println(initializerUrl)
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
-	filePath := fmt.Sprintf("%s/.minitializer/%s.zip", userHomeDir, serviceName)
-	err = DownloadFile(initializerUrl, filePath)
+	servicePath := fmt.Sprintf("%s/.minitializer/%s/%s", userHomeDir, projectName, serviceName)
+	zipPath := servicePath + ".zip"
+	err = DownloadFile(initializerUrl, zipPath)
 	if err != nil {
 		return err
 	}
-	_, err = zip.Unzip(filePath, fmt.Sprintf("%s/.minitializer/%s", userHomeDir, baseDir))
+	_, err = Unzip(zipPath, servicePath)
 	if err != nil {
 		return err
 	}
-	err = os.RemoveAll(filePath)
+	err = os.RemoveAll(zipPath)
 	if err != nil {
 		return err
 	}
