@@ -14,13 +14,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var File string
+var FromFile bool
 var AsZip bool
 var Dest string
 
 func init() {
-	generateCmd.Flags().StringVarP(&File, "file", "f", "", "file path")
-	generateCmd.MarkFlagRequired("file")
+	generateCmd.Flags().BoolVarP(&FromFile, "file", "f", true, "generate from file")
 	generateCmd.Flags().BoolVarP(&AsZip, "zip", "z", false, "generate as a zip")
 	generateCmd.Flags().StringVarP(&Dest, "dest", "d", ".", "destination folder")
 	rootCmd.AddCommand(generateCmd)
@@ -33,24 +32,26 @@ var generateCmd = &cobra.Command{
 }
 
 func generate(cmd *cobra.Command, args []string) error {
-	miConfig := getMIConfig(File)
+	miConfig := getMIConfig(args[0])
 	for serviceName, service := range miConfig.Services {
 		getInitializer(serviceName, service).Initialize(&miConfig)
 	}
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-	projectPath := fmt.Sprintf("%s/.minitializer/%s", userHomeDir, miConfig.Metadata["name"])
-	if AsZip {
-		err = utils.ZipDirectory(Dest + "/" + miConfig.Metadata["name"]+".zip", projectPath)
+	if FromFile {
+		userHomeDir, err := os.UserHomeDir()
 		if err != nil {
 			return err
 		}
-	} else {
-		err := cp.Copy(projectPath, Dest + "/" + miConfig.Metadata["name"])
-		if err != nil {
-			return err
+		projectPath := fmt.Sprintf("%s/.minitializer/%s", userHomeDir, miConfig.Metadata["name"])
+		if AsZip {
+			err = utils.ZipDirectory(Dest + "/" + miConfig.Metadata["name"] + ".zip", projectPath)
+			if err != nil {
+				return err
+			}
+		} else {
+			err := cp.Copy(projectPath, Dest + "/" + miConfig.Metadata["name"])
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
