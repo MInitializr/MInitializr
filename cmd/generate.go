@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,9 +13,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var FromFile bool
-var AsZip bool
-var Dest string
+// command flags
+var (
+	FromFile bool
+	AsZip    bool
+	Dest     string
+)
 
 func init() {
 	generateCmd.Flags().BoolVarP(&FromFile, "file", "f", true, "generate from file")
@@ -29,46 +31,102 @@ var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "generate",
 	RunE:  generate,
+	Args: func(cmd *cobra.Command, args []string) error {
+		// Optionally run one of the validators provided by cobra
+		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+			return err
+		}
+		// Run the custom validation logic
+		_, err := os.ReadFile(args[0])
+		if err != nil {
+			return err
+		}
+
+		return nil
+	},
 }
 
+
+var (
+	userHomeDir string
+	miDataDir   string
+	projectPath string
+)
+
 func generate(cmd *cobra.Command, args []string) error {
-	miConfig := getMIConfig(args[0])
-	for serviceName, service := range miConfig.Services {
-		getInitializer(serviceName, service).Initialize(&miConfig)
+	miConfig, err := getMIConfig(args[0])
+	if err != nil {
+		return err
 	}
+
+	initVariables(miConfig)
+
+	for serviceName, service := range miConfig.Services {
+		getInitializer(serviceName, service).Initialize(miConfig)
+	}
+
 	if FromFile {
 		userHomeDir, err := os.UserHomeDir()
 		if err != nil {
 			return err
 		}
-		projectPath := fmt.Sprintf("%s/.minitializer/%s", userHomeDir, miConfig.Metadata["name"])
+		miDataDir = fmt.Sprintf("%s/.minitializer", userHomeDir)
+		projectPath = fmt.Sprintf("%s/%s", miDataDir, miConfig.Metadata["name"])
 		if AsZip {
-			err = utils.ZipDirectory(Dest + "/" + miConfig.Metadata["name"] + ".zip", projectPath)
+			err = utils.ZipDirectory(Dest+"/"+miConfig.Metadata["name"]+".zip", projectPath)
 			if err != nil {
 				return err
 			}
 		} else {
-			err := cp.Copy(projectPath, Dest + "/" + miConfig.Metadata["name"])
+			err := cp.Copy(projectPath, Dest+"/"+miConfig.Metadata["name"])
 			if err != nil {
 				return err
 			}
 		}
 	}
+
+	err = cleanUp(miConfig)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func getMIConfig(filePath string) types.MIConfig {
+func cleanUp(miConfig *types.MIConfig) error {
+	err := os.RemoveAll(projectPath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func initVariables(miConfig *types.MIConfig) {
+	miDataDir = fmt.Sprintf("%s/.minitializer", userHomeDir)
+	projectPath = fmt.Sprintf("%s/%s", miDataDir, miConfig.Metadata["name"])
+}
+
+func getMIConfig(filePath string) (*types.MIConfig, error) {
 	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
+		return nil, err
 	}
 	var miConfig types.MIConfig
 	err = yaml.Unmarshal(yamlFile, &miConfig)
 	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		return nil, err
 	}
+	err = validateMiFile(&miConfig)
+	if err != nil {
+		return nil, err
+	}
+	return &miConfig, err
+}
 
-	return miConfig
+func validateMiFile(miConfig *types.MIConfig) error {
+	if miConfig.Metadata["name"] == "" {
+		return fmt.Errorf("property mi.metadata.name cannot be null or empty")
+	}
+	return nil
 }
 
 func getInitializer(serviceName string, service types.MIService) types.Initializer {
