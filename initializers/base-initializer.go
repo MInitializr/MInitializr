@@ -1,9 +1,8 @@
 package initializers
 
 import (
-	"log"
-
-	"example.com/minitializr/types"
+	"github.com/HamzaBenyazid/minitializr/logger"
+	"github.com/HamzaBenyazid/minitializr/types"
 )
 
 type BaseInitializer struct {
@@ -12,5 +11,5 @@ type BaseInitializer struct {
 }
 
 func (BaseInitializer) Initialize(*types.MIConfig) {
-	log.Println("BaseIntializer")
+	logger.Debug("BaseIntializer")
 }

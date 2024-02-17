@@ -2,23 +2,30 @@ package utils
 
 import (
 	"fmt"
-	"log"
+	"net/http"
 	"os"
 )
 
 func InitializeWithWebIntializer(projectName, serviceName, baseDir, initializerUrl string) error {
-	log.Println(initializerUrl)
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
-	servicePath := fmt.Sprintf("%s/.minitializer/%s/%s", userHomeDir, projectName, serviceName)
+	projectPath := fmt.Sprintf("%s/.minitializer/%s", userHomeDir, projectName)
+	servicePath := fmt.Sprintf("%s/%s", projectPath, serviceName)
 	zipPath := servicePath + ".zip"
-	err = DownloadFile(initializerUrl, zipPath)
+	response, err := http.Get(initializerUrl)
 	if err != nil {
 		return err
 	}
-	_, err = Unzip(zipPath, servicePath)
+	err = DownloadFile(response, zipPath)
+	if err != nil {
+		return err
+	}
+	
+	targetPath := projectPath + "/" + baseDir
+
+	_, err = Unzip(zipPath, targetPath)
 	if err != nil {
 		return err
 	}

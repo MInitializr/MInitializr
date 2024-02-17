@@ -1,6 +1,6 @@
 package types
 
 type MIService struct {
-	Technology string         `yaml:"technology"`
-	Config     map[string]any `yaml:"config"`
+	Technology string         `json:"technology" binding:"required"`
+	Config     map[string]any `json:"config" binding:"required"`
 }

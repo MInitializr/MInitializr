@@ -2,6 +2,7 @@ package utils
 
 import (
 	"archive/zip"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -75,55 +76,48 @@ func Unzip(src string, dest string) ([]string, error) {
 	return filenames, nil
 }
 
+func ZipDirectory(srcDir string) (*bytes.Buffer, error) {
+	var buf bytes.Buffer
+	w := zip.NewWriter(&buf)
+	defer w.Close()
 
-func ZipDirectory(destFile, srcDir string ) error {
-    file, err := os.Create(destFile)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
+	walker := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
 
-    w := zip.NewWriter(file)
-    defer w.Close()
+		// Ensure that `path` is not absolute; it should not start with "/".
+		// This snippet happens to work because I don't use
+		// absolute paths, but ensure your real-world code
+		// transforms path into a zip-root relative path.
+		f, err := w.Create(path)
+		if err != nil {
+			return err
+		}
 
-    walker := func(path string, info os.FileInfo, err error) error {
-        fmt.Printf("Crawling: %#v\n", path)
-        if err != nil {
-            return err
-        }
-        if info.IsDir() {
-            return nil
-        }
-        file, err := os.Open(path)
-        if err != nil {
-            return err
-        }
-        defer file.Close()
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return err
+		}
 
-        // Ensure that `path` is not absolute; it should not start with "/".
-        // This snippet happens to work because I don't use 
-        // absolute paths, but ensure your real-world code 
-        // transforms path into a zip-root relative path.
-        f, err := w.Create(path)
-        if err != nil {
-            return err
-        }
-
-        _, err = io.Copy(f, file)
-        if err != nil {
-            return err
-        }
-
-        return nil
-    }
-	err = os.Chdir(srcDir)
-	if err != nil {
-		return err
+		return nil
 	}
-    err = filepath.Walk(".", walker)
-    if err != nil {
-        return err
-    }
-	return nil
-}
+	err := os.Chdir(srcDir)
+	if err != nil {
+		return nil, err
+	}
+	err = filepath.Walk(".", walker)
+	if err != nil {
+		return nil, err
+	}
 
+	return &buf, nil
+}
