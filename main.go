@@ -18,7 +18,7 @@ func setupRouter() *gin.Engine {
 		c.String(http.StatusOK, "ok")
 	})
 
-	r.POST("/generate", func(c *gin.Context) {
+	r.POST("/initialize", func(c *gin.Context) {
 
 		var miConfig types.MIConfig
 
@@ -26,12 +26,12 @@ func setupRouter() *gin.Engine {
 			c.JSON(http.StatusBadRequest, gin.H{"err": err.Error(), "error_type": "Bind failure"})
 			return
 		}
-		zipFile, err := service.Generate(&miConfig)
+		zipFile, err := service.Initialize(&miConfig)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"err": err.Error(), "error_type": "Generate failure"})
+			c.JSON(http.StatusBadRequest, gin.H{"err": err.Error(), "error_type": "Initialize failure"})
 			return
 		}
-		c.Header("Content-Disposition", "attachment; filename="+miConfig.Metadata["name"] + ".zip")
+		c.Header("Content-Disposition", "attachment; filename=" + miConfig.Metadata["name"] + ".zip")
 		c.Data(http.StatusOK, "application/zip", zipFile.Bytes())
 	})
 

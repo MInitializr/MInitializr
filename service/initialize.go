@@ -10,7 +10,7 @@ import (
 	"github.com/HamzaBenyazid/minitializr/utils"
 )
 
-func Generate(miConfig *types.MIConfig) (*bytes.Buffer, error) {
+func Initialize(miConfig *types.MIConfig) (*bytes.Buffer, error) {
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
