@@ -30,16 +30,7 @@ func (initializer MicronautInitializer) Initialize(miConfig *types.MIConfig) {
 
 func (initializer MicronautInitializer) constructUrl() (string, error) {
 	config := initializer.Service.Config
-	versionAlias := "launch"
-	switch config["version"] {
-	case "latest", "4.2.4":
-		versionAlias = "launch"
-	case "snapshot", "4.2.5-SNAPSHOT":
-		versionAlias = "snapshot"
-	case "prev", "3.10.1":
-		versionAlias = "prev"
-	}
-	baseURL := fmt.Sprintf("https://%s.micronaut.io/create/%s/%s.%s", versionAlias, config["type"], config["basePackage"], config["name"])
+	baseURL := fmt.Sprintf("https://%s.micronaut.io/create/%s/%s.%s", config["version"], config["type"], config["basePackage"], config["name"])
 	urlParams := url.Values{}
 	urlParams.Add("lang", fmt.Sprintf("%v", config["lang"]))
 	urlParams.Add("build", fmt.Sprintf("%v", config["build"]))

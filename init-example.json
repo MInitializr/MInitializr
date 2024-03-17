@@ -6,8 +6,8 @@
     "services": {
       "costumer": {
         "technology": "spring-boot",
+        "version": "3.2.3",
         "config": {
-          "version": "3.2.2",
           "language": "java",
           "type": "maven-project",
           "group": "com.example",
@@ -22,8 +22,8 @@
       },
       "product": {
         "technology": "micronaut",
+        "version": "prev",
         "config": {
-          "version": "prev",
           "type": "default",
           "lang": "JAVA",
           "test": "JUNIT",
@@ -39,6 +39,7 @@
       },
       "stock": {
         "technology": "quarkus",
+        "version": "3.8",
         "config": {
           "group": "io.mi",
           "artifact": "stock",
@@ -53,6 +54,7 @@
       },
       "payment": {
         "technology": "grails",
+        "version": "6.1.2",
         "config": {
           "version": "6.1.2",
           "type": "rest_api",
@@ -69,8 +71,8 @@
       },
       "review": {
         "technology": "vertx",
+        "version": "4.5.3",
         "config": {
-          "vertxVersion": "4.5.3",
           "groupId": "io.mi",
           "artifactId": "review",
           "language": "java",

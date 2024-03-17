@@ -29,14 +29,7 @@ func (initializer GrailsInitializer) Initialize(miConfig *types.MIConfig) {
 
 func (initializer GrailsInitializer) constructUrl() (string, error) {
 	config := initializer.Service.Config
-	versionAlias := "latest"
-	switch config["version"] {
-	case "latest", "6.1.2":
-		versionAlias = "latest"
-	case "snapshot", "6.1.3-SNAPSHOT":
-		versionAlias = "snapshot"
-	}
-	baseURL := fmt.Sprintf("https://%s.grails.org/create/%s/%s.%s", versionAlias, config["type"], config["basePackage"], config["name"])
+	baseURL := fmt.Sprintf("https://%s.grails.org/create/%s/%s.%s", config["version"], config["type"], config["basePackage"], config["name"])
 	urlParams := url.Values{}
 	urlParams.Add("gorm", fmt.Sprintf("%v", config["gorm"]))
 	urlParams.Add("servlet", fmt.Sprintf("%v", config["servlet"]))
