@@ -1,0 +1,6 @@
+[submodule "minitializr.org"]
+	path = minitializr.org
+	url = git@github.com:MInitializr/minitializr.org.git
+[submodule "cli"]
+	path = cli
+	url = git@github.com:MInitializr/MInitializr-cli.git
