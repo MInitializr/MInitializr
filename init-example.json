@@ -17,7 +17,9 @@
           "packageName": "com.example.demo",
           "javaVersion": 17,
           "packaging": "jar",
-          "dependencies": "native"
+          "dependencies": [
+            "native"
+          ]
         }
       },
       "product": {
